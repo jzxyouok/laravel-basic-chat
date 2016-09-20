@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddIsOnlineToUsersTable extends Migration
+class AddLastSeenAtToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class AddIsOnlineToUsersTable extends Migration
     public function up()
     {
     	Schema::table('users', function ($table) {
-    		$table->tinyInteger('is_online')->nullable();
+    		$table->dateTime('last_seen_at')->nullable();
     	});
     }
 
@@ -25,7 +25,7 @@ class AddIsOnlineToUsersTable extends Migration
     public function down()
     {
     	Schema::table('users', function ($table) {
-    		$table->dropColumn('is_online');
+    		$table->dropColumn('last_seen_at');
     	});
     }
 }
