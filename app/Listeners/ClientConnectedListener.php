@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use Codemash\Socket\Events\ClientConnected;
+use Carbon\Carbon;
 
 class ClientConnectedListener
 {
@@ -24,6 +25,10 @@ class ClientConnectedListener
 	 */
 	public function handle(ClientConnected $event)
 	{
-		echo $event->client->getUser()->email;
+		$user = $event->client->getUser();
+		$user->is_online = 1;
+		$user->last_seen_at = Carbon::now();
+		$user->connection_id = $event->client->id;
+		$user->save();
 	}
 }

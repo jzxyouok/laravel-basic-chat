@@ -20,7 +20,7 @@ class CreateMessagesTable extends Migration
     		$table->string('file_path')->nullable();
     		$table->string('mime')->nullable();
     		$table->integer('channel_id');
-    		$table->integer('message_id');
+    		$table->integer('user_id');
     		$table->dateTime('read_at')->nullable();
     		$table->nullableTimestamps();
     	});
