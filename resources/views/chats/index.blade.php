@@ -15,7 +15,7 @@
 		</div>
 		<div class="col-md-10">
 			<div class="panel panel-default" id="chat-panel">
-  				<div class="panel-heading" id="chat-heading"></div>
+  				<div class="panel-heading" id="chat-heading">{{ str_replace('/', '', explode(':', url('/'))[1]) }}</div>
   				<div class="panel-body" id="chat-body"></div>
   				<div class="panel-footer" id="chat-footer">
   					<div class="row">
@@ -40,7 +40,7 @@
 @endsection
 
 @section('custom-scripts')
-	{!! Socket::javascript() !!}
-	<script>window.appSocket = new Socket("ws://localhost:8043");</script>
+	<script type="text/javascript" src="{{ asset('vendor/socket/socket.js') }}"></script>
+	<script>window.appSocket = new Socket("ws://{{ str_replace('/', '', explode(':', url('/'))[1]) }}:{{ config('socket.default_port') }}");</script>
 	<script type="text/javascript" src="{{ asset('js/chat-custom.js') }}"></script>
 @endsection
