@@ -51,7 +51,18 @@ class MessageReceivedListener
 		}
 		else if($command == 'fileMessage')
 		{
-		
+			$returnValue = $this->messageRepository->saveFileMessage($message, $user);
+			$message = $returnValue['message'];
+			$channel = $returnValue['channel'];
+			$users = $channel->users;
+			foreach ($users as $currentUser)
+			{
+				if(!(($currentUser->is_online == 0) || empty($currentUser->is_online)))
+				{
+					$client = $event->clients->where('id', $currentUser->connection_id)->first();
+					$client->send('FileMessage', json_encode($message));
+				}
+			}
 		}
 	}
 }

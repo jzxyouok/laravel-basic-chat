@@ -12,17 +12,31 @@ jQuery(document).ready(function()
     });
 
     socket.on('textMessage', function (newMessage) {
-    	console.log(newMessage);
         receiveTextMessage(newMessage);
+    });
+    
+    socket.on('fileMessage', function(newMessage) {
+    	receiveFileMessage(newMessage);
     });
 
     socket.connect(function () {
-        
+    	
     });
     
     $('#chat-panel').click(function()
     {
-    	readMessages(channelId);
+    	if(channelId != 0)
+    	{	
+    		readMessages(channelId);
+    	}
+    });
+    
+    $('#chat-file-input').change(function()
+    {
+    	if(channelId != 0)
+    	{
+    		uploadAttachment();
+    	}
     });
 });
 
@@ -32,6 +46,27 @@ function receiveTextMessage(messageJson)
 	if(message.channel_id == channelId)
 	{
 		displayTextMessage(message);
+	}
+	else
+	{
+		var unread = parseInt($('#unread-'+message.channel_id).text());
+		if(isNaN(unread))
+		{
+			$('#unread-'+message.channel_id).text('1');
+		}
+		else
+		{
+			$('#unread-'+message.channel_id).text(unread+1);
+		}
+	}
+}
+
+function receiveFileMessage(messageJson)
+{
+	var message = JSON.parse(messageJson);
+	if(message.channel_id == channelId)
+	{
+		displayFileMessage(message);
 	}
 	else
 	{
@@ -78,6 +113,11 @@ function sendTextMessage()
 	}
 }
 
+function sendFileMessage(filaname)
+{
+	socket.send('fileMessage', createFileMessageObject(message));
+}
+
 function readMessages(channelId)
 {
 	jQuery.ajax(
@@ -105,7 +145,14 @@ function loadMessages()
 				for(var i in messages)
 				{
 					message = messages[i];
-					displayTextMessage(message);
+					if(message.type == 'text')
+					{
+						displayTextMessage(message);
+					}
+					else
+					{
+						displayFileMessage(message);
+					}
 				}
 				if(more == true)
 				{
@@ -158,6 +205,14 @@ function createTextMessageObject(message)
 	return JSON.stringify(messageObject);
 }
 
+function createFileMessageObject(filename)
+{
+	var messageObject = {
+		'channel_id': channelId,
+		'file': file
+	};
+}
+
 function reinitializeChannel()
 {
 	jQuery('#chat-heading').empty();
@@ -172,4 +227,32 @@ function displayOldTextMessage(message)
 function displayTextMessage(message)
 {
 	jQuery('#chat-body').append('<span class="sender-name">' + message.user.name + '</span> : ' + message.text + '<br/>');
+}
+
+function displayFileMessage(message)
+{
+	if(message.type == image)
+	{
+		jQuery('#chat-body').append('<span class="sender-name">' + message.user.name + '</span> : <img src="' + message.file_path + '" class="file-message-image"/><br/>');
+	}
+	else
+	{
+		jQuery('#chat-body').append('<span class="sender-name">' + message.user.name + '</span> : <a href="' + message.file_path + '">'+message.file_path+'</a><br/>');
+	}
+}
+
+function uploadAttachment()
+{
+	jQuery('#chat-file-input').fileupload(
+	{
+		url: '/uploads/file',
+		success: function(files)
+		{
+			sendFileMessage(files[0]);
+		},
+		error: function(msg)
+		{
+			console.log(msg);
+		}
+	});
 }
