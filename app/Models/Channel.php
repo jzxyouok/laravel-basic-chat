@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Auth;
 
 class Channel extends Model
 {
@@ -26,5 +27,34 @@ class Channel extends Model
 	public function otherThanGivenUser($user)
 	{
 		return $this->users()->whereNotIn('email', [$user->email])->first();
+	}
+	
+	public function othersThanGivenUser($user)
+	{
+		return $this->users()->whereNotIn('email', [$user->email])->get();
+	}
+	
+	public function unreadMessages()
+	{
+		$messages = $this->messages;
+		$unreadMessages = array();
+		foreach ($messages as $message)
+		{
+			if(empty($message->read_at))
+			{
+				$unreadMessages[] = $message;
+			}
+		}
+		return collect($unreadMessages);
+	}
+	
+	public function unreadMessagesCount()
+	{
+		$count = $this->unreadMessages()->count();
+		if($count == 0)
+		{
+			return null;
+		}
+		return $count;
 	}
 }

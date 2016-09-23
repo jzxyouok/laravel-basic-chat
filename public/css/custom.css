@@ -1,11 +1,18 @@
 #chat-body
 {
 	height: 71vh;
+	overflow: scroll;
 }
 
 #chat-footer
 {
 	height: 9vh;
+}
+
+#contacts-sidebar
+{
+	height: 86vh;
+	overflow: scroll;
 }
 
 .chat-grid

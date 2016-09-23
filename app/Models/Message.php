@@ -11,7 +11,7 @@ class Message extends Model
 
 	public function user()
 	{
-		return $this->belongsToMany('App\User');
+		return $this->belongsTo('App\User');
 	}
 	
 	public function channel()

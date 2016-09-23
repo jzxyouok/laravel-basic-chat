@@ -22,3 +22,9 @@ Route::get('/home', 'HomeController@index');
 Route::get('/test', 'Chat\TestController@test');
 
 Route::get('/chat', 'Chat\ChatController@index');
+
+Route::get('/channel/chat-top/{channelId}', 'Chat\ChatController@chatTop');
+
+Route::get('/channel/messages/{channelId}/{pageNumber?}', 'Chat\ChannelController@messages');
+
+Route::get('/channel/markread/{channelId}', 'Chat\ChannelController@markMessagesRead');

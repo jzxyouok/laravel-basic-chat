@@ -32,7 +32,8 @@ class MessageReceivedListener
 		$user = $event->client->getUser();
 		$message = $event->message;
 		$command = $message->command;
-		$message = json_decode($message->data);
+		$data = $message->data;
+		$message = $data->scalar;
 		if($command === 'textMessage')
 		{
 			$returnValue = $this->messageRepository->saveTextMessage($message, $user);
@@ -41,10 +42,10 @@ class MessageReceivedListener
 			$users = $channel->users;
 			foreach ($users as $currentUser)
 			{
-				if(($user->is_online == 0) || empty($user->is_online))
+				if(!(($currentUser->is_online == 0) || empty($currentUser->is_online)))
 				{
-					$client = $event->clients->where('id', $user->connection_id)->first();
-					$client->send('textMessage', $message->only(['text', 'channel_id', 'created_at']));
+					$client = $event->clients->where('id', $currentUser->connection_id)->first();
+					$client->send('textMessage', json_encode($message));
 				}
 			}
 		}
