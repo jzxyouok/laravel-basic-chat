@@ -11,8 +11,10 @@ class ChannelRepository
 	public function getChannelMessages($channelId, $pageNumber)
 	{
 		$channel = Channel::find($channelId);
-		$messages = $channel->messages()->with('user')->orderBy('created_at', 'desc')->get();
+		$messages = $channel->messages()->with('user')->get();
+		$messages = $messages->sortByDesc('created_at');
 		$pagedMessages = $messages->slice($pageNumber*50, 50);
+		$pagedMessages = $pagedMessages->reverse()->all();
 		$result = [
 			'messages' => $pagedMessages,
 			'more' => $this->haveMoreMessages($channelId, $pageNumber)

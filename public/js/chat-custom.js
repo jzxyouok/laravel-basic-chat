@@ -102,14 +102,43 @@ function loadMessages()
 				loadedMessageCount++;
 				var messages = response.messages;
 				var more = response.more;
-				for(var i = 0; i < messages.length; i++)
+				for(var i in messages)
 				{
-					var message = messages[i];
+					message = messages[i];
 					displayTextMessage(message);
 				}
 				if(more == true)
 				{
-					jQuery('#chat-body').prepend('<a id="load-more-link" href="#" onclick="loadMessages()">Load More</a><br/>');
+					jQuery('#chat-body').prepend('<a id="load-more-link" href="#" onclick="loadOldMessages()">Load More</a><br/>');
+				}
+				else
+				{
+					jQuery('#load-more-link').remove();
+				}
+			}
+		}
+	);
+}
+
+function loadOldMessages()
+{
+	jQuery.ajax(
+		{
+			url: '/channel/messages/'+channelId+'/'+loadedMessageCount,
+			type: 'GET',
+			success: function(response)
+			{
+				loadedMessageCount++;
+				var messages = response.messages;
+				var more = response.more;
+				for(var i in messages)
+				{
+					message = messages[i];
+					displayOldTextMessage(message);
+				}
+				if(more == true)
+				{
+					jQuery('#chat-body').prepend('<a id="load-more-link" href="#" onclick="loadOldMessages()">Load More</a><br/>');
 				}
 				else
 				{
@@ -135,7 +164,12 @@ function reinitializeChannel()
 	jQuery('#chat-body').empty();
 }
 
+function displayOldTextMessage(message)
+{
+	jQuery('#chat-body').prepend('<span class="sender-name">' + message.user.name + '</span> : ' + message.text + '<br/>');
+}
+
 function displayTextMessage(message)
 {
-	jQuery('#chat-body').prepend('<span class="sender-name">'+message.user.name+'</span> : '+ message.text+'<br/>');
+	jQuery('#chat-body').append('<span class="sender-name">' + message.user.name + '</span> : ' + message.text + '<br/>');
 }
