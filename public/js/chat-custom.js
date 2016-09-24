@@ -113,9 +113,9 @@ function sendTextMessage()
 	}
 }
 
-function sendFileMessage(filaname)
+function sendFileMessage(filename)
 {
-	socket.send('fileMessage', createFileMessageObject(message));
+	socket.send('fileMessage', createFileMessageObject(filename));
 }
 
 function readMessages(channelId)
@@ -209,8 +209,9 @@ function createFileMessageObject(filename)
 {
 	var messageObject = {
 		'channel_id': channelId,
-		'file': file
+		'file': filename
 	};
+	return JSON.stringify(messageObject);
 }
 
 function reinitializeChannel()
@@ -231,7 +232,7 @@ function displayTextMessage(message)
 
 function displayFileMessage(message)
 {
-	if(message.type == image)
+	if((message.type == 'image'))
 	{
 		jQuery('#chat-body').append('<span class="sender-name">' + message.user.name + '</span> : <img src="' + message.file_path + '" class="file-message-image"/><br/>');
 	}

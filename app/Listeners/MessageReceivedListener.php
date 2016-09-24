@@ -5,6 +5,7 @@ namespace App\Listeners;
 use Codemash\Socket\Events\MessageReceived;
 use App\Repositories\Chat\MessageRepository;
 use App\Repositories\Chat\ChannelRepository;
+use Log;
 
 class MessageReceivedListener
 {
@@ -60,7 +61,7 @@ class MessageReceivedListener
 				if(!(($currentUser->is_online == 0) || empty($currentUser->is_online)))
 				{
 					$client = $event->clients->where('id', $currentUser->connection_id)->first();
-					$client->send('FileMessage', json_encode($message));
+					$client->send('fileMessage', json_encode($message));
 				}
 			}
 		}
