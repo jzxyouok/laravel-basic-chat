@@ -18,6 +18,11 @@ jQuery(document).ready(function()
     socket.on('fileMessage', function(newMessage) {
     	receiveFileMessage(newMessage);
     });
+    
+    socket.on('onlineStatus', function(statusJson) {
+    	console.log(statusJson);
+    	updateChannelOnlineStatus(statusJson);
+    });
 
     socket.connect(function () {
     	
@@ -39,6 +44,23 @@ jQuery(document).ready(function()
     	}
     });
 });
+
+function updateChannelOnlineStatus(statusJson)
+{
+	var statusObj = JSON.parse(statusJson);
+	var channelId = statusObj.channel_id;
+	var online = statusObj.online;
+	if(online == 0)
+	{
+		$('#'+channelId+'-online-status').removeClass();
+		$('#'+channelId+'-online-status').addClass("hasnotification hasnotification-default mr5");
+	}
+	else
+	{
+		$('#'+channelId+'-online-status').removeClass();
+		$('#'+channelId+'-online-status').addClass("hasnotification hasnotification-success mr5");
+	}
+}
 
 function receiveTextMessage(messageJson)
 {

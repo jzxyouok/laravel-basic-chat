@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+	<link rel="stylesheet" href="{{ asset('css/uielement.css') }}"/>
 	<div class="container">
 	<div class="row">
 		<div class="col-md-2">
 			<div class="row" id="contacts-sidebar">
 				@foreach(Auth::user()->channels as $channel)
 				<a class="col-md-12 chat-grid" onclick="channelSelected({{ $channel->id }})">
+					<span id="{{ $channel->id }}-online-status" class="hasnotification hasnotification-{{ ($channel->otherUser()->is_online == 1) ? 'success' : 'default' }} mr5"></span>
 					{{ $channel->otherUser()->name }}
 					<span id="unread-{{ $channel->id }}">{{ $channel->unreadMessagesCount() }}</span>
 				</a>
